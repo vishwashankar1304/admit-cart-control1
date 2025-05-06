@@ -2,7 +2,7 @@
 import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from './AuthContext';
-import { Product, CartItem, Cart, Order } from '@/types';
+import { Product, CartItem, Cart, Order, Address } from '@/types';
 
 interface CartContextType {
   cart: Cart;
@@ -10,7 +10,7 @@ interface CartContextType {
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
-  checkout: () => string | null;
+  checkout: (address: Address, paymentMethod: string) => string | null;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -121,7 +121,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setCart(getInitialCart());
   };
 
-  const checkout = (): string | null => {
+  const checkout = (address: Address, paymentMethod: string): string | null => {
     if (!user) {
       toast({
         variant: "destructive",
@@ -148,7 +148,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       totalPrice: cart.totalPrice,
       status: 'pending',
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      address,
+      paymentMethod
     };
     
     // Save order to localStorage

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,7 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getOrders, getOrderById, updateOrderStatus } from "@/utils/dataUtils";
 import { Order, OrderStatus } from "@/types";
 import { formatPrice, formatOrderId, formatDate } from "@/utils/formatters";
-import { Search, Eye } from "lucide-react";
+import { Search, Eye, CreditCard, Cash } from "lucide-react";
 
 const getStatusBadgeVariant = (status: OrderStatus) => {
   switch (status) {
@@ -115,6 +114,27 @@ const AdminOrders = () => {
     }
   };
 
+  // Helper function to display payment method with icon
+  const getPaymentMethodDisplay = (method?: string) => {
+    if (!method) return "Not specified";
+    
+    return (
+      <div className="flex items-center">
+        {method === "razorpay" ? (
+          <>
+            <CreditCard size={16} className="mr-1" />
+            <span>Razorpay</span>
+          </>
+        ) : (
+          <>
+            <Cash size={16} className="mr-1" />
+            <span>COD</span>
+          </>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div>
       <h1 className="text-3xl font-bold mb-8">Orders</h1>
@@ -162,6 +182,7 @@ const AdminOrders = () => {
               <TableHead>Order ID</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Customer</TableHead>
+              <TableHead>Payment</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -170,7 +191,7 @@ const AdminOrders = () => {
           <TableBody>
             {filteredOrders.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-6 text-gray-500">
+                <TableCell colSpan={7} className="text-center py-6 text-gray-500">
                   No orders found
                 </TableCell>
               </TableRow>
@@ -182,6 +203,9 @@ const AdminOrders = () => {
                   </TableCell>
                   <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>{order.userId}</TableCell>
+                  <TableCell>
+                    {getPaymentMethodDisplay(order.paymentMethod)}
+                  </TableCell>
                   <TableCell>{formatPrice(order.totalPrice)}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusBadgeVariant(order.status)}>
@@ -222,6 +246,14 @@ const AdminOrders = () => {
           {currentOrder && (
             <>
               <div className="space-y-6">
+                {/* Payment Method */}
+                {currentOrder.paymentMethod && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Payment Method:</span>
+                    <span>{getPaymentMethodDisplay(currentOrder.paymentMethod)}</span>
+                  </div>
+                )}
+                
                 {/* Shipping Address */}
                 {currentOrder.address && (
                   <div className="border p-4 rounded-md">
