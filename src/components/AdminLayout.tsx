@@ -2,7 +2,6 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
-  Home, 
   Package, 
   ShoppingCart, 
   Users, 
@@ -73,14 +72,6 @@ const AdminLayout = () => {
             </NavLink>
             
             <div className="pt-6 mt-6 border-t border-gray-700">
-              <NavLink
-                to="/"
-                className="flex items-center p-3 rounded-lg text-gray-300 hover:bg-gray-800"
-              >
-                <Home size={18} className="mr-3" />
-                Back to Shop
-              </NavLink>
-              
               <Button
                 variant="ghost"
                 onClick={handleLogout}

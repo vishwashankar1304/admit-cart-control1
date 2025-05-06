@@ -2,11 +2,13 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { getProductById } from "@/utils/dataUtils";
-import { Product } from "@/types";
+import { getProductById, addReview, likeReview } from "@/utils/dataUtils";
+import { Product, Review } from "@/types";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { formatPrice } from "@/utils/formatters";
-import { ShoppingCart, Plus, Minus, ArrowLeft } from "lucide-react";
+import { ShoppingCart, Plus, Minus, ArrowLeft, Star } from "lucide-react";
+import ReviewSection from "@/components/ReviewSection";
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,8 +16,15 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
+  const { user } = useAuth();
 
   useEffect(() => {
+    if (id) {
+      loadProduct();
+    }
+  }, [id]);
+
+  const loadProduct = () => {
     if (id) {
       const fetchedProduct = getProductById(id);
       if (fetchedProduct) {
@@ -23,7 +32,7 @@ const ProductDetailPage = () => {
       }
       setLoading(false);
     }
-  }, [id]);
+  };
 
   const handleQuantityChange = (value: number) => {
     if (value < 1) return;
@@ -33,6 +42,25 @@ const ProductDetailPage = () => {
   const handleAddToCart = () => {
     if (product) {
       addToCart(product, quantity);
+    }
+  };
+
+  const handleAddReview = (rating: number, comment: string) => {
+    if (product && user && id) {
+      addReview(id, {
+        rating,
+        comment,
+        userId: user.id,
+        userName: user.name
+      });
+      loadProduct(); // Reload product with new review
+    }
+  };
+
+  const handleLikeReview = (reviewId: string) => {
+    if (id && user) {
+      likeReview(id, reviewId);
+      loadProduct(); // Reload product with updated like count
     }
   };
 
@@ -88,6 +116,25 @@ const ProductDetailPage = () => {
             {formatPrice(product.price)}
           </div>
           
+          {/* Rating display */}
+          {product.avgRating ? (
+            <div className="flex items-center mb-6">
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star 
+                    key={i} 
+                    className={`w-5 h-5 ${i < Math.floor(product.avgRating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                  />
+                ))}
+              </div>
+              <span className="ml-2 text-gray-600">
+                {product.avgRating.toFixed(1)} ({product.reviews?.length || 0} reviews)
+              </span>
+            </div>
+          ) : (
+            <div className="mb-6 text-sm text-gray-500">No ratings yet</div>
+          )}
+          
           <div className="mb-6 text-gray-700">
             <h3 className="font-semibold text-lg mb-2">Description</h3>
             <p>{product.description}</p>
@@ -126,7 +173,7 @@ const ProductDetailPage = () => {
             <div className="flex items-center justify-between border-t border-gray-200 pt-4 text-sm text-gray-500">
               <div className="flex items-center">
                 <div className="mr-2">🚚</div>
-                Free shipping over $50
+                Free shipping over ₹1,000
               </div>
               <div className="flex items-center">
                 <div className="mr-2">🔄</div>
@@ -136,6 +183,14 @@ const ProductDetailPage = () => {
           </div>
         </div>
       </div>
+      
+      {/* Reviews Section */}
+      <ReviewSection 
+        productId={product.id}
+        reviews={product.reviews || []}
+        onAddReview={handleAddReview}
+        onLikeReview={handleLikeReview}
+      />
     </div>
   );
 };

@@ -16,6 +16,18 @@ export interface Product {
   category: string;
   inStock: boolean;
   createdAt: string;
+  reviews?: Review[];
+  avgRating?: number;
+}
+
+export interface Review {
+  id: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  likes: number;
 }
 
 export interface CartItem {
@@ -28,6 +40,13 @@ export interface Cart {
   totalPrice: number;
 }
 
+export interface Address {
+  street: string;
+  city: string;
+  state: string;
+  pincode: string;
+}
+
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 
 export interface Order {
@@ -38,4 +57,5 @@ export interface Order {
   status: OrderStatus;
   createdAt: string;
   updatedAt: string;
+  address?: Address;
 }

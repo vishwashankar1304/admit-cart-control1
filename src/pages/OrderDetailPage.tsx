@@ -17,7 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getOrderById } from "@/utils/dataUtils";
 import { formatPrice, formatDate, formatOrderId } from "@/utils/formatters";
 import { Order, OrderStatus } from "@/types";
-import { ArrowLeft, Clock, Truck, Check, X, Package } from "lucide-react";
+import { ArrowLeft, Clock, Truck, Check, X, Package, MapPin } from "lucide-react";
 
 // Helper function to get badge variant based on order status
 const getStatusBadgeVariant = (status: OrderStatus) => {
@@ -195,7 +195,7 @@ const OrderDetailPage = () => {
         
         {/* Order summary */}
         <div>
-          <Card>
+          <Card className="mb-6">
             <CardHeader>
               <CardTitle className="text-lg">Order Summary</CardTitle>
             </CardHeader>
@@ -231,6 +231,25 @@ const OrderDetailPage = () => {
               </Button>
             </CardFooter>
           </Card>
+          
+          {/* Shipping address */}
+          {order.address && (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center">
+                  <MapPin className="h-4 w-4 mr-2" />
+                  Shipping Address
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-sm space-y-1">
+                  <p className="font-medium">{order.address.street}</p>
+                  <p>{order.address.city}, {order.address.state}</p>
+                  <p>PIN: {order.address.pincode}</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

@@ -222,6 +222,18 @@ const AdminOrders = () => {
           {currentOrder && (
             <>
               <div className="space-y-6">
+                {/* Shipping Address */}
+                {currentOrder.address && (
+                  <div className="border p-4 rounded-md">
+                    <h4 className="text-sm font-medium mb-2">Shipping Address</h4>
+                    <div className="text-sm">
+                      <p>{currentOrder.address.street}</p>
+                      <p>{currentOrder.address.city}, {currentOrder.address.state}</p>
+                      <p>PIN: {currentOrder.address.pincode}</p>
+                    </div>
+                  </div>
+                )}
+                
                 {/* Order items */}
                 <div>
                   <h4 className="text-sm font-medium mb-2">Items</h4>
