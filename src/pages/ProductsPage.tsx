@@ -21,7 +21,7 @@ const ProductsPage = () => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all"); // Changed from empty string to "all"
   const [sortBy, setSortBy] = useState("featured");
   const [filterOpen, setFilterOpen] = useState(false);
 
@@ -43,7 +43,7 @@ const ProductsPage = () => {
     
     // Set initial category from URL
     if (searchParams.get("category")) {
-      setSelectedCategory(searchParams.get("category") || "");
+      setSelectedCategory(searchParams.get("category") || "all"); // Changed from empty string to "all"
     }
   }, [searchParams]);
 
@@ -60,8 +60,8 @@ const ProductsPage = () => {
       );
     }
     
-    // Apply category filter
-    if (selectedCategory) {
+    // Apply category filter - modified to check for "all"
+    if (selectedCategory && selectedCategory !== "all") {
       filtered = filtered.filter(
         (product) => product.category === selectedCategory
       );
@@ -97,7 +97,7 @@ const ProductsPage = () => {
 
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value);
-    if (value) {
+    if (value && value !== "all") {
       searchParams.set("category", value);
     } else {
       searchParams.delete("category");
@@ -107,7 +107,7 @@ const ProductsPage = () => {
 
   const handleClearFilters = () => {
     setSearchTerm("");
-    setSelectedCategory("");
+    setSelectedCategory("all"); // Changed from empty string to "all"
     setSortBy("featured");
     setSearchParams(new URLSearchParams());
   };
@@ -154,7 +154,7 @@ const ProductsPage = () => {
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all">All Categories</SelectItem> {/* Changed from empty string to "all" */}
                   {categories.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
@@ -202,7 +202,7 @@ const ProductsPage = () => {
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem> {/* Changed from empty string to "all" */}
                     {categories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}
