@@ -17,7 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getOrderById } from "@/utils/dataUtils";
 import { formatPrice, formatDate, formatOrderId } from "@/utils/formatters";
 import { Order, OrderStatus } from "@/types";
-import { ArrowLeft, Clock, Truck, Check, X, Package, MapPin, CreditCard, DollarSign } from "lucide-react";
+import { ArrowLeft, Clock, Truck, Check, X, Package, MapPin } from "lucide-react";
 
 // Helper function to get badge variant based on order status
 const getStatusBadgeVariant = (status: OrderStatus) => {
@@ -52,27 +52,6 @@ const getStatusIcon = (status: OrderStatus) => {
     default:
       return <Clock size={18} />;
   }
-};
-
-// Helper function to display payment method with icon
-const getPaymentMethodDisplay = (method?: string) => {
-  if (!method) return null;
-  
-  return (
-    <div className="flex items-center">
-      {method === "razorpay" ? (
-        <>
-          <CreditCard size={18} className="mr-2" />
-          <span>Online Payment (Razorpay)</span>
-        </>
-      ) : (
-        <>
-          <DollarSign size={18} className="mr-2" />
-          <span>Cash on Delivery</span>
-        </>
-      )}
-    </div>
-  );
 };
 
 const OrderDetailPage = () => {
@@ -224,11 +203,6 @@ const OrderDetailPage = () => {
               <div>
                 <p className="text-sm text-gray-500">Order ID: {formatOrderId(order.id)}</p>
                 <p className="text-sm text-gray-500">Placed On: {formatDate(order.createdAt)}</p>
-                {order.paymentMethod && (
-                  <div className="text-sm text-gray-500 mt-2">
-                    Payment Method: {getPaymentMethodDisplay(order.paymentMethod)}
-                  </div>
-                )}
               </div>
               
               <Separator />

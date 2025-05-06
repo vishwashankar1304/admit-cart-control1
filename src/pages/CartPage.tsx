@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   Table, 
@@ -10,11 +12,34 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { formatPrice } from "@/utils/formatters";
 import { Plus, Minus, Trash, ArrowRight } from "lucide-react";
 
 const CartPage = () => {
-  const { cart, updateQuantity, removeFromCart } = useCart();
+  const { cart, updateQuantity, removeFromCart, checkout } = useCart();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleCheckout = () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+    
+    setIsProcessing(true);
+    
+    // Simulate processing delay
+    setTimeout(() => {
+      const orderId = checkout();
+      setIsProcessing(false);
+      
+      if (orderId) {
+        navigate(`/orders/${orderId}`);
+      }
+    }, 1000);
+  };
 
   if (cart.items.length === 0) {
     return (
@@ -150,12 +175,18 @@ const CartPage = () => {
             
             <Button 
               className="w-full mt-4"
-              asChild
+              onClick={handleCheckout}
+              disabled={isProcessing}
             >
-              <Link to="/checkout">
-                Proceed to Checkout <ArrowRight size={16} className="ml-2" />
-              </Link>
+              {isProcessing ? "Processing..." : "Checkout"}
+              {!isProcessing && <ArrowRight size={16} className="ml-2" />}
             </Button>
+            
+            {!isAuthenticated && (
+              <p className="text-sm text-gray-500 mt-4">
+                Please <Link to="/login" className="text-brand-blue hover:underline">login</Link> to complete checkout.
+              </p>
+            )}
           </div>
           
           <div className="mt-4 space-y-3">
@@ -165,7 +196,7 @@ const CartPage = () => {
             </div>
             <div className="flex items-center text-gray-600 text-sm">
               <div className="mr-2">🚚</div>
-              Free Shipping Over ₹500
+              Free Shipping Over $50
             </div>
             <div className="flex items-center text-gray-600 text-sm">
               <div className="mr-2">🔄</div>

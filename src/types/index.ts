@@ -58,5 +58,4 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
   address?: Address;
-  paymentMethod?: string;
 }
