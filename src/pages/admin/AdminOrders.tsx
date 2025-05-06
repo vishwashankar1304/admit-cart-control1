@@ -29,7 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getOrders, getOrderById, updateOrderStatus } from "@/utils/dataUtils";
 import { Order, OrderStatus } from "@/types";
 import { formatPrice, formatOrderId, formatDate } from "@/utils/formatters";
-import { Search, Eye, CreditCard, Cash } from "lucide-react";
+import { Search, Eye, CreditCard, DollarSign } from "lucide-react";
 
 const getStatusBadgeVariant = (status: OrderStatus) => {
   switch (status) {
@@ -127,7 +127,7 @@ const AdminOrders = () => {
           </>
         ) : (
           <>
-            <Cash size={16} className="mr-1" />
+            <DollarSign size={16} className="mr-1" />
             <span>COD</span>
           </>
         )}

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
@@ -16,7 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getOrderById } from "@/utils/dataUtils";
 import { formatPrice, formatDate, formatOrderId } from "@/utils/formatters";
 import { Order, OrderStatus } from "@/types";
-import { ArrowLeft, Clock, Truck, Check, X, Package, MapPin, CreditCard, Cash } from "lucide-react";
+import { ArrowLeft, Clock, Truck, Check, X, Package, MapPin, CreditCard, DollarSign } from "lucide-react";
 
 // Helper function to get badge variant based on order status
 const getStatusBadgeVariant = (status: OrderStatus) => {
@@ -66,7 +67,7 @@ const getPaymentMethodDisplay = (method?: string) => {
         </>
       ) : (
         <>
-          <Cash size={18} className="mr-2" />
+          <DollarSign size={18} className="mr-2" />
           <span>Cash on Delivery</span>
         </>
       )}
