@@ -26,7 +26,7 @@ const getStatusBadgeVariant = (status: OrderStatus) => {
     case 'shipped':
       return 'default';
     case 'delivered':
-      return 'success';
+      return 'secondary'; // Changed from 'success' to 'secondary'
     case 'cancelled':
       return 'destructive';
     default:
