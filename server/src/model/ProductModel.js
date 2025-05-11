@@ -24,9 +24,31 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  stock: {
+    type: Number,
+    required: true,
+    min: 0,
+    default: 0,
+  },
   inStock: {
     type: Boolean,
     default: true,
+  },
+  featured: {
+    type: Boolean,
+    default: false,
+  },
+  rating: {
+    type: Number,
+    min: 0,
+    max: 5,
+    default: 0,
+  },
+  avgRating: {
+    type: Number,
+    min: 0,
+    max: 5,
+    default: 0,
   },
 }, {
   timestamps: true,

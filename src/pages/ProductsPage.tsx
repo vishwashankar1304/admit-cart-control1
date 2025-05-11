@@ -10,9 +10,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ProductCard from "@/components/ProductCard";
-import { getProducts, initializeProducts } from "@/utils/dataUtils";
 import { Product } from "@/types";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { productApi } from "@/services/api";
+import { useToast } from "@/hooks/use-toast";
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,48 +24,34 @@ const ProductsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all");
   const [sortBy, setSortBy] = useState("featured");
   const [filterOpen, setFilterOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   // Function to load products
-  const loadProducts = () => {
-    const allProducts = getProducts();
-    setProducts(allProducts);
-    
-    // Extract categories
-    const uniqueCategories = Array.from(
-      new Set(allProducts.map((product) => product.category))
-    );
-    setCategories(uniqueCategories);
+  const loadProducts = async () => {
+    try {
+      const fetchedProducts = await productApi.getAllProducts();
+      setProducts(fetchedProducts);
+      
+      // Extract categories
+      const uniqueCategories = Array.from(
+        new Set(fetchedProducts.map((product) => product.category))
+      );
+      setCategories(uniqueCategories);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load products",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    // Initialize products if they don't exist
-    initializeProducts();
-    
-    // Load initial products
     loadProducts();
-    
-    // Set initial search term from URL
-    if (searchParams.get("search")) {
-      setSearchTerm(searchParams.get("search") || "");
-    }
-    
-    // Set initial category from URL
-    if (searchParams.get("category")) {
-      setSelectedCategory(searchParams.get("category") || "all");
-    }
-
-    // Listen for product updates
-    const handleProductsUpdate = (event: CustomEvent) => {
-      setProducts(event.detail);
-    };
-
-    window.addEventListener('productsUpdated', handleProductsUpdate as EventListener);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('productsUpdated', handleProductsUpdate as EventListener);
-    };
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     // Apply filters and sorting
@@ -79,7 +66,7 @@ const ProductsPage = () => {
       );
     }
     
-    // Apply category filter - modified to check for "all"
+    // Apply category filter
     if (selectedCategory && selectedCategory !== "all") {
       filtered = filtered.filter(
         (product) => product.category === selectedCategory
@@ -130,6 +117,14 @@ const ProductsPage = () => {
     setSortBy("featured");
     setSearchParams(new URLSearchParams());
   };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 flex justify-center">
+        <div>Loading products...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -257,7 +252,6 @@ const ProductsPage = () => {
         )}
       </div>
       
-      {/* Product grid */}
       {filteredProducts.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (

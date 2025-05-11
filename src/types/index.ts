@@ -8,6 +8,10 @@ export interface Product {
   stock: number;
   featured?: boolean;
   rating?: number;
+  inStock: boolean;
+  createdAt: string;
+  reviews?: Review[];
+  avgRating?: number;
 }
 
 export interface CartItem {
@@ -50,4 +54,14 @@ export interface User {
   name: string;
   email: string;
   isAdmin?: boolean;
+}
+
+export interface Review {
+  id: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  likes: number;
 }

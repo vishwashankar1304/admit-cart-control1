@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const connectDB = require("./src/config/MongoDB");
 const productRoutes = require('./src/router/ProductRouter');
 
@@ -7,6 +8,8 @@ const PORT = process.env.PORT || 5006;
 
 connectDB();
 
+// Enable CORS
+app.use(cors());
 
 app.use(express.json());
 app.use('/api/products', productRoutes);

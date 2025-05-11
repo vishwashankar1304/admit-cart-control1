@@ -23,6 +23,10 @@ const createProduct = async (req, res) => {
     const productData = {
       ...req.body,
       imageUrl,
+      stock: parseInt(req.body.stock) || 0,
+      price: parseFloat(req.body.price),
+      inStock: req.body.inStock === 'true',
+      featured: req.body.featured === 'true',
     };
 
     const newProduct = await productService.createProduct(productData);
@@ -60,10 +64,17 @@ const updateProduct = async (req, res) => {
     const { id } = req.params;
     const updateData = { ...req.body };
 
-    // If there's a file, add it to the updateData object
+    // If there's a file, upload it to Cloudinary
     if (req.file) {
-      updateData.image = req.file.path; // Assuming image field is `image`
+      const result = await streamUpload(req.file.buffer);
+      updateData.imageUrl = result.secure_url;
     }
+
+    // Convert string values to appropriate types
+    if (updateData.stock) updateData.stock = parseInt(updateData.stock);
+    if (updateData.price) updateData.price = parseFloat(updateData.price);
+    if (updateData.inStock) updateData.inStock = updateData.inStock === 'true';
+    if (updateData.featured) updateData.featured = updateData.featured === 'true';
 
     const updatedProduct = await productService.updateProduct(id, updateData);
 
@@ -76,7 +87,6 @@ const updateProduct = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-
 
 const deleteProduct = async (req, res) => {
   try {

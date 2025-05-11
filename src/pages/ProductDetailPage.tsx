@@ -1,14 +1,14 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { getProductById, addReview, likeReview } from "@/utils/dataUtils";
-import { Product, Review } from "@/types";
+import { Product } from "@/types";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatPrice } from "@/utils/formatters";
 import { ShoppingCart, Plus, Minus, ArrowLeft, Star } from "lucide-react";
 import ReviewSection from "@/components/ReviewSection";
+import { productApi } from "@/services/api";
+import { useToast } from "@/hooks/use-toast";
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +17,7 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
   const { user } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (id) {
@@ -24,13 +25,20 @@ const ProductDetailPage = () => {
     }
   }, [id]);
 
-  const loadProduct = () => {
+  const loadProduct = async () => {
     if (id) {
-      const fetchedProduct = getProductById(id);
-      if (fetchedProduct) {
+      try {
+        const fetchedProduct = await productApi.getProductById(id);
         setProduct(fetchedProduct);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load product details",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
   };
 
@@ -42,25 +50,44 @@ const ProductDetailPage = () => {
   const handleAddToCart = () => {
     if (product) {
       addToCart(product, quantity);
-    }
-  };
-
-  const handleAddReview = (rating: number, comment: string) => {
-    if (product && user && id) {
-      addReview(id, {
-        rating,
-        comment,
-        userId: user.id,
-        userName: user.name
+      toast({
+        title: "Success",
+        description: "Product added to cart",
       });
-      loadProduct(); // Reload product with new review
     }
   };
 
-  const handleLikeReview = (reviewId: string) => {
-    if (id && user) {
-      likeReview(id, reviewId);
-      loadProduct(); // Reload product with updated like count
+  const handleAddReview = async (rating: number, comment: string) => {
+    if (!id || !user) return;
+
+    try {
+      await productApi.addReview(id, { rating, comment });
+      toast({
+        title: "Success",
+        description: "Review added successfully",
+      });
+      loadProduct(); // Reload product to get updated reviews
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add review",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleLikeReview = async (reviewId: string) => {
+    if (!id || !user) return;
+
+    try {
+      await productApi.likeReview(id, reviewId);
+      loadProduct(); // Reload product to get updated review likes
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to like review",
+        variant: "destructive",
+      });
     }
   };
 
@@ -96,7 +123,7 @@ const ProductDetailPage = () => {
         </Link>
       </Button>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div className="grid md:grid-cols-2 gap-8">
         {/* Product Image */}
         <div className="rounded-lg overflow-hidden">
           <img
@@ -166,8 +193,10 @@ const ProductDetailPage = () => {
             <Button
               onClick={handleAddToCart}
               className="w-full"
+              disabled={!product.inStock}
             >
-              <ShoppingCart size={18} className="mr-2" /> Add to Cart
+              <ShoppingCart size={18} className="mr-2" /> 
+              {product.inStock ? 'Add to Cart' : 'Out of Stock'}
             </Button>
             
             <div className="flex items-center justify-between border-t border-gray-200 pt-4 text-sm text-gray-500">

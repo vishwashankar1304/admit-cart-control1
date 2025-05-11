@@ -487,18 +487,14 @@ export const getUsers = (): Omit<User, 'password'>[] => {
 export const getAdminStats = () => {
   const users = getUsers();
   const orders = getOrders();
-  const products = getProducts();
   
   const totalSales = orders.reduce((sum, order) => sum + order.totalPrice, 0);
   const pendingOrders = orders.filter(order => order.status === 'pending').length;
-  const lowStockProducts = products.filter(product => !product.inStock).length;
   
   return {
     totalUsers: users.length,
     totalOrders: orders.length,
-    totalProducts: products.length,
     totalSales,
-    pendingOrders,
-    lowStockProducts
+    pendingOrders
   };
 };

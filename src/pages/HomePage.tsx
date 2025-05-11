@@ -1,20 +1,44 @@
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
-import { initializeProducts, getProducts } from "@/utils/dataUtils";
 import { Product } from "@/types";
+import { productApi } from "@/services/api";
+import { useToast } from "@/hooks/use-toast";
 
 const HomePage = () => {
-  useEffect(() => {
-    // Initialize products if they don't exist
-    initializeProducts();
-  }, []);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  // Get featured products (first 4)
-  const featuredProducts: Product[] = getProducts().slice(0, 4);
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const products = await productApi.getAllProducts();
+        // Get first 4 products as featured
+        setFeaturedProducts(products.slice(0, 4));
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load featured products",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, [toast]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 flex justify-center">
+        <div>Loading featured products...</div>
+      </div>
+    );
+  }
 
   return (
     <div>

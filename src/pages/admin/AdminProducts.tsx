@@ -32,15 +32,32 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  getProducts, 
-  addProduct, 
-  updateProduct, 
-  deleteProduct 
-} from "@/utils/dataUtils";
 import { Product } from "@/types";
 import { formatPrice } from "@/utils/formatters";
 import { Plus, Edit, Trash, Search } from "lucide-react";
+import { productApi } from "@/services/api";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const CATEGORIES = [
+  'Lighting',
+  'Fans',
+  'Cooling',
+  'Plumbing',
+  'Paint',
+  'Construction',
+  'Electrical',
+  'Heating',
+  'Smart Home',
+  'Home Decor',
+  'Tools',
+  'Ventilation'
+];
 
 const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -49,37 +66,37 @@ const AdminProducts = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
   
   // Form state
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productCategory, setProductCategory] = useState("");
-  const [productImageUrl, setProductImageUrl] = useState("");
+  const [productStock, setProductStock] = useState("");
+  const [productImage, setProductImage] = useState<File | null>(null);
   const [productInStock, setProductInStock] = useState(true);
   
   const { toast } = useToast();
 
   // Function to load products
-  const loadProducts = () => {
-    const fetchedProducts = getProducts();
-    setProducts(fetchedProducts);
+  const loadProducts = async () => {
+    try {
+      const fetchedProducts = await productApi.getAllProducts();
+      setProducts(fetchedProducts);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load products",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     loadProducts();
-
-    // Listen for product updates
-    const handleProductsUpdate = (event: CustomEvent) => {
-      setProducts(event.detail);
-    };
-
-    window.addEventListener('productsUpdated', handleProductsUpdate as EventListener);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('productsUpdated', handleProductsUpdate as EventListener);
-    };
   }, []);
 
   const filteredProducts = products.filter(product => 
@@ -93,7 +110,8 @@ const AdminProducts = () => {
     setProductDescription("");
     setProductPrice("");
     setProductCategory("");
-    setProductImageUrl("");
+    setProductStock("");
+    setProductImage(null);
     setProductInStock(true);
     setCurrentProduct(null);
   };
@@ -109,7 +127,7 @@ const AdminProducts = () => {
     setProductDescription(product.description);
     setProductPrice(product.price.toString());
     setProductCategory(product.category);
-    setProductImageUrl(product.imageUrl);
+    setProductStock(product.stock.toString());
     setProductInStock(product.inStock);
     setIsEditDialogOpen(true);
   };
@@ -123,14 +141,25 @@ const AdminProducts = () => {
     e.preventDefault();
     
     try {
-      const newProduct = addProduct({
-        name: productName,
-        description: productDescription,
-        price: parseFloat(productPrice),
-        category: productCategory,
-        imageUrl: productImageUrl,
-        inStock: productInStock
-      });
+      if (!productName || !productDescription || !productPrice || !productCategory || !productStock || !productImage) {
+        toast({
+          title: "Error",
+          description: "Please fill in all required fields",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('name', productName);
+      formData.append('description', productDescription);
+      formData.append('price', productPrice);
+      formData.append('category', productCategory);
+      formData.append('stock', productStock);
+      formData.append('inStock', productInStock.toString());
+      formData.append('imageUrl', productImage);
+
+      await productApi.createProduct(formData);
       
       toast({
         title: "Success",
@@ -139,10 +168,11 @@ const AdminProducts = () => {
       
       setIsAddDialogOpen(false);
       resetForm();
-    } catch (error) {
+      loadProducts();
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to add product",
+        description: error.response?.data?.message || "Failed to add product",
         variant: "destructive",
       });
     }
@@ -154,15 +184,18 @@ const AdminProducts = () => {
     if (!currentProduct) return;
     
     try {
-      const updatedProduct = updateProduct({
-        ...currentProduct,
-        name: productName,
-        description: productDescription,
-        price: parseFloat(productPrice),
-        category: productCategory,
-        imageUrl: productImageUrl,
-        inStock: productInStock
-      });
+      const formData = new FormData();
+      formData.append('name', productName);
+      formData.append('description', productDescription);
+      formData.append('price', productPrice);
+      formData.append('category', productCategory);
+      formData.append('stock', productStock);
+      formData.append('inStock', productInStock.toString());
+      if (productImage) {
+        formData.append('imageUrl', productImage);
+      }
+
+      await productApi.updateProduct(currentProduct.id, formData);
       
       toast({
         title: "Success",
@@ -171,6 +204,7 @@ const AdminProducts = () => {
       
       setIsEditDialogOpen(false);
       resetForm();
+      loadProducts();
     } catch (error) {
       toast({
         title: "Error",
@@ -184,19 +218,15 @@ const AdminProducts = () => {
     if (!currentProduct) return;
     
     try {
-      const success = deleteProduct(currentProduct.id);
+      await productApi.deleteProduct(currentProduct.id);
       
-      if (success) {
-        toast({
-          title: "Success",
-          description: "Product deleted successfully",
-        });
-      } else {
-        throw new Error("Failed to delete product");
-      }
+      toast({
+        title: "Success",
+        description: "Product deleted successfully",
+      });
       
       setIsDeleteDialogOpen(false);
-      resetForm();
+      loadProducts();
     } catch (error) {
       toast({
         title: "Error",
@@ -206,8 +236,16 @@ const AdminProducts = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 flex justify-center">
+        <div>Loading products...</div>
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Products</h1>
         <Button onClick={openAddDialog}>
@@ -276,23 +314,20 @@ const AdminProducts = () => {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end space-x-2">
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="icon"
                         onClick={() => openEditDialog(product)}
                       >
                         <Edit size={16} />
-                        <span className="sr-only">Edit</span>
                       </Button>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="icon"
                         onClick={() => openDeleteDialog(product)}
-                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
                       >
                         <Trash size={16} />
-                        <span className="sr-only">Delete</span>
                       </Button>
                     </div>
                   </TableCell>
@@ -302,213 +337,216 @@ const AdminProducts = () => {
           </TableBody>
         </Table>
       </div>
-      
+
       {/* Add Product Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="sm:max-w-[550px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Product</DialogTitle>
             <DialogDescription>
-              Create a new product to add to your store.
+              Fill in the details to add a new product to the store.
             </DialogDescription>
           </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input
-                id="name"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                value={productDescription}
-                onChange={(e) => setProductDescription(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="price" className="text-right">
-                Price
-              </Label>
-              <Input
-                id="price"
-                type="number"
-                step="0.01"
-                value={productPrice}
-                onChange={(e) => setProductPrice(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="category" className="text-right">
-                Category
-              </Label>
-              <Input
-                id="category"
-                value={productCategory}
-                onChange={(e) => setProductCategory(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="imageUrl" className="text-right">
-                Image URL
-              </Label>
-              <Input
-                id="imageUrl"
-                value={productImageUrl}
-                onChange={(e) => setProductImageUrl(e.target.value)}
-                className="col-span-3"
-                placeholder="https://example.com/image.jpg"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="inStock" className="text-right">
-                In Stock
-              </Label>
+          <form onSubmit={handleAddProduct}>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Product Name</Label>
+                <Input
+                  id="name"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={productDescription}
+                  onChange={(e) => setProductDescription(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="price">Price</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  value={productPrice}
+                  onChange={(e) => setProductPrice(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="stock">Stock</Label>
+                <Input
+                  id="stock"
+                  type="number"
+                  value={productStock}
+                  onChange={(e) => setProductStock(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
+                <Select
+                  value={productCategory}
+                  onValueChange={setProductCategory}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="image">Product Image</Label>
+                <Input
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setProductImage(e.target.files?.[0] || null)}
+                  required
+                />
+              </div>
               <div className="flex items-center space-x-2">
                 <Switch
                   id="inStock"
                   checked={productInStock}
                   onCheckedChange={setProductInStock}
                 />
-                <Label htmlFor="inStock">
-                  {productInStock ? "Yes" : "No"}
-                </Label>
+                <Label htmlFor="inStock">In Stock</Label>
               </div>
             </div>
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleAddProduct}>Save Product</Button>
-          </DialogFooter>
+            <DialogFooter>
+              <Button type="submit">Add Product</Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
-      
+
       {/* Edit Product Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[550px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Product</DialogTitle>
             <DialogDescription>
-              Update the details of this product.
+              Update the product details below.
             </DialogDescription>
           </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-name" className="text-right">
-                Name
-              </Label>
-              <Input
-                id="edit-name"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-description" className="text-right">
-                Description
-              </Label>
-              <Textarea
-                id="edit-description"
-                value={productDescription}
-                onChange={(e) => setProductDescription(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-price" className="text-right">
-                Price
-              </Label>
-              <Input
-                id="edit-price"
-                type="number"
-                step="0.01"
-                value={productPrice}
-                onChange={(e) => setProductPrice(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-category" className="text-right">
-                Category
-              </Label>
-              <Input
-                id="edit-category"
-                value={productCategory}
-                onChange={(e) => setProductCategory(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-imageUrl" className="text-right">
-                Image URL
-              </Label>
-              <Input
-                id="edit-imageUrl"
-                value={productImageUrl}
-                onChange={(e) => setProductImageUrl(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-inStock" className="text-right">
-                In Stock
-              </Label>
+          <form onSubmit={handleUpdateProduct}>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-name">Product Name</Label>
+                <Input
+                  id="edit-name"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-description">Description</Label>
+                <Textarea
+                  id="edit-description"
+                  value={productDescription}
+                  onChange={(e) => setProductDescription(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-price">Price</Label>
+                <Input
+                  id="edit-price"
+                  type="number"
+                  value={productPrice}
+                  onChange={(e) => setProductPrice(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-stock">Stock</Label>
+                <Input
+                  id="edit-stock"
+                  type="number"
+                  value={productStock}
+                  onChange={(e) => setProductStock(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-category">Category</Label>
+                <Select
+                  value={productCategory}
+                  onValueChange={setProductCategory}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-image">Product Image</Label>
+                <Input
+                  id="edit-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setProductImage(e.target.files?.[0] || null)}
+                />
+                {currentProduct && (
+                  <div className="mt-2">
+                    <img
+                      src={currentProduct.imageUrl}
+                      alt="Current product"
+                      className="w-20 h-20 object-cover rounded"
+                    />
+                  </div>
+                )}
+              </div>
               <div className="flex items-center space-x-2">
                 <Switch
                   id="edit-inStock"
                   checked={productInStock}
                   onCheckedChange={setProductInStock}
                 />
-                <Label htmlFor="edit-inStock">
-                  {productInStock ? "Yes" : "No"}
-                </Label>
+                <Label htmlFor="edit-inStock">In Stock</Label>
               </div>
             </div>
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleUpdateProduct}>Update Product</Button>
-          </DialogFooter>
+            <DialogFooter>
+              <Button type="submit">Update Product</Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
-      
-      {/* Delete Product Dialog */}
+
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete{" "}
-              <span className="font-semibold">{currentProduct?.name}</span>
-              {" "}from your store.
+              This action cannot be undone. This will permanently delete the product
+              from the store.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDeleteProduct}
-              className="bg-red-500 text-white hover:bg-red-600"
-            >
+            <AlertDialogAction onClick={handleDeleteProduct}>
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
