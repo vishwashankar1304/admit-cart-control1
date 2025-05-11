@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -77,6 +76,23 @@ const Navbar = () => {
             >
               Products
             </NavLink>
+            <NavLink 
+              to="/about" 
+              className={({ isActive }) => 
+                isActive ? "text-brand-blue font-medium" : "text-gray-600 hover:text-brand-blue"
+              }
+            >
+              About
+            </NavLink>
+            <NavLink 
+              to="/contact" 
+              className={({ isActive }) => 
+                isActive ? "text-brand-blue font-medium" : "text-gray-600 hover:text-brand-blue"
+              }
+            >
+              Contact
+            </NavLink>
+
             <NavLink 
               to="/cart" 
               className={({ isActive }) => 
@@ -187,6 +203,24 @@ const Navbar = () => {
               onClick={toggleMobileMenu}
             >
               Products
+            </NavLink>
+            <NavLink 
+              to="/about" 
+              className={({ isActive }) => 
+                isActive ? "block text-brand-blue font-medium" : "block text-gray-600"
+              }
+              onClick={toggleMobileMenu}
+            >
+              About
+            </NavLink>
+            <NavLink 
+              to="/contact" 
+              className={({ isActive }) => 
+                isActive ? "block text-brand-blue font-medium" : "block text-gray-600"
+              }
+              onClick={toggleMobileMenu}
+            >
+              Contact
             </NavLink>
             
             {user ? (

@@ -1,33 +1,13 @@
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  password?: string;
-  isAdmin: boolean;
-}
-
 export interface Product {
   id: string;
   name: string;
-  description: string;
   price: number;
+  description: string;
   imageUrl: string;
   category: string;
-  inStock: boolean;
-  createdAt: string;
-  reviews?: Review[];
-  avgRating?: number;
-}
-
-export interface Review {
-  id: string;
-  userId: string;
-  userName: string;
-  rating: number;
-  comment: string;
-  createdAt: string;
-  likes: number;
+  stock: number;
+  featured?: boolean;
+  rating?: number;
 }
 
 export interface CartItem {
@@ -41,11 +21,15 @@ export interface Cart {
 }
 
 export interface Address {
+  fullName: string;
   street: string;
   city: string;
   state: string;
   pincode: string;
+  phone: string;
 }
+
+export type PaymentMethod = 'razorpay' | 'cash_on_delivery';
 
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 
@@ -58,4 +42,12 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
   address?: Address;
+  paymentMethod?: PaymentMethod;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  isAdmin?: boolean;
 }

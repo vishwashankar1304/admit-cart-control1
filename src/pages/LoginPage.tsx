@@ -93,7 +93,7 @@ const LoginPage = () => {
             
             <div className="text-sm text-gray-500">
               <p><strong>Regular User:</strong> Create an account using Sign Up</p>
-              <p><strong>Admin:</strong> admin@gmail.com / admin@123</p>
+             
             </div>
           </CardContent>
           

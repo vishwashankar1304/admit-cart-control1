@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,14 +60,27 @@ const AdminProducts = () => {
   
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
+  // Function to load products
   const loadProducts = () => {
     const fetchedProducts = getProducts();
     setProducts(fetchedProducts);
   };
+
+  useEffect(() => {
+    loadProducts();
+
+    // Listen for product updates
+    const handleProductsUpdate = (event: CustomEvent) => {
+      setProducts(event.detail);
+    };
+
+    window.addEventListener('productsUpdated', handleProductsUpdate as EventListener);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('productsUpdated', handleProductsUpdate as EventListener);
+    };
+  }, []);
 
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -107,140 +119,89 @@ const AdminProducts = () => {
     setIsDeleteDialogOpen(true);
   };
 
-  const handleAddProduct = () => {
+  const handleAddProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     try {
-      // Validate inputs
-      if (!productName || !productDescription || !productPrice || !productCategory || !productImageUrl) {
-        toast({
-          variant: "destructive",
-          title: "Missing fields",
-          description: "Please fill all required fields",
-        });
-        return;
-      }
-      
-      const price = parseFloat(productPrice);
-      if (isNaN(price) || price <= 0) {
-        toast({
-          variant: "destructive",
-          title: "Invalid price",
-          description: "Please enter a valid price",
-        });
-        return;
-      }
-      
-      // Add product
       const newProduct = addProduct({
         name: productName,
         description: productDescription,
-        price,
+        price: parseFloat(productPrice),
         category: productCategory,
         imageUrl: productImageUrl,
-        inStock: productInStock,
+        inStock: productInStock
       });
       
-      // Close dialog and refresh
+      toast({
+        title: "Success",
+        description: "Product added successfully",
+      });
+      
       setIsAddDialogOpen(false);
       resetForm();
-      loadProducts();
-      
-      toast({
-        title: "Product added",
-        description: `${newProduct.name} has been added successfully`,
-      });
-      
     } catch (error) {
       toast({
-        variant: "destructive",
         title: "Error",
         description: "Failed to add product",
+        variant: "destructive",
       });
     }
   };
 
-  const handleEditProduct = () => {
+  const handleUpdateProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!currentProduct) return;
+    
     try {
-      if (!currentProduct) return;
-      
-      // Validate inputs
-      if (!productName || !productDescription || !productPrice || !productCategory || !productImageUrl) {
-        toast({
-          variant: "destructive",
-          title: "Missing fields",
-          description: "Please fill all required fields",
-        });
-        return;
-      }
-      
-      const price = parseFloat(productPrice);
-      if (isNaN(price) || price <= 0) {
-        toast({
-          variant: "destructive",
-          title: "Invalid price",
-          description: "Please enter a valid price",
-        });
-        return;
-      }
-      
-      // Update product
       const updatedProduct = updateProduct({
         ...currentProduct,
         name: productName,
         description: productDescription,
-        price,
+        price: parseFloat(productPrice),
         category: productCategory,
         imageUrl: productImageUrl,
-        inStock: productInStock,
+        inStock: productInStock
       });
       
-      // Close dialog and refresh
+      toast({
+        title: "Success",
+        description: "Product updated successfully",
+      });
+      
       setIsEditDialogOpen(false);
       resetForm();
-      loadProducts();
-      
-      toast({
-        title: "Product updated",
-        description: `${updatedProduct.name} has been updated successfully`,
-      });
-      
     } catch (error) {
       toast({
-        variant: "destructive",
         title: "Error",
         description: "Failed to update product",
+        variant: "destructive",
       });
     }
   };
 
-  const handleDeleteProduct = () => {
+  const handleDeleteProduct = async () => {
+    if (!currentProduct) return;
+    
     try {
-      if (!currentProduct) return;
-      
-      // Delete product
       const success = deleteProduct(currentProduct.id);
       
       if (success) {
-        // Close dialog and refresh
-        setIsDeleteDialogOpen(false);
-        loadProducts();
-        
         toast({
-          title: "Product deleted",
-          description: `${currentProduct.name} has been deleted successfully`,
+          title: "Success",
+          description: "Product deleted successfully",
         });
       } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to delete product",
-        });
+        throw new Error("Failed to delete product");
       }
       
+      setIsDeleteDialogOpen(false);
+      resetForm();
     } catch (error) {
       toast({
-        variant: "destructive",
         title: "Error",
         description: "Failed to delete product",
+        variant: "destructive",
       });
     }
   };
@@ -526,7 +487,7 @@ const AdminProducts = () => {
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleEditProduct}>Update Product</Button>
+            <Button onClick={handleUpdateProduct}>Update Product</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

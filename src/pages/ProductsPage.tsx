@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -11,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ProductCard from "@/components/ProductCard";
-import { getProducts } from "@/utils/dataUtils";
+import { getProducts, initializeProducts } from "@/utils/dataUtils";
 import { Product } from "@/types";
 import { Search, SlidersHorizontal } from "lucide-react";
 
@@ -21,12 +20,12 @@ const ProductsPage = () => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all"); // Changed from empty string to "all"
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all");
   const [sortBy, setSortBy] = useState("featured");
   const [filterOpen, setFilterOpen] = useState(false);
 
-  useEffect(() => {
-    // Load products
+  // Function to load products
+  const loadProducts = () => {
     const allProducts = getProducts();
     setProducts(allProducts);
     
@@ -35,6 +34,14 @@ const ProductsPage = () => {
       new Set(allProducts.map((product) => product.category))
     );
     setCategories(uniqueCategories);
+  };
+
+  useEffect(() => {
+    // Initialize products if they don't exist
+    initializeProducts();
+    
+    // Load initial products
+    loadProducts();
     
     // Set initial search term from URL
     if (searchParams.get("search")) {
@@ -43,8 +50,20 @@ const ProductsPage = () => {
     
     // Set initial category from URL
     if (searchParams.get("category")) {
-      setSelectedCategory(searchParams.get("category") || "all"); // Changed from empty string to "all"
+      setSelectedCategory(searchParams.get("category") || "all");
     }
+
+    // Listen for product updates
+    const handleProductsUpdate = (event: CustomEvent) => {
+      setProducts(event.detail);
+    };
+
+    window.addEventListener('productsUpdated', handleProductsUpdate as EventListener);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('productsUpdated', handleProductsUpdate as EventListener);
+    };
   }, [searchParams]);
 
   useEffect(() => {
@@ -107,7 +126,7 @@ const ProductsPage = () => {
 
   const handleClearFilters = () => {
     setSearchTerm("");
-    setSelectedCategory("all"); // Changed from empty string to "all"
+    setSelectedCategory("all");
     setSortBy("featured");
     setSearchParams(new URLSearchParams());
   };
@@ -154,7 +173,7 @@ const ProductsPage = () => {
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem> {/* Changed from empty string to "all" */}
+                  <SelectItem value="all">All Categories</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
@@ -202,7 +221,7 @@ const ProductsPage = () => {
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem> {/* Changed from empty string to "all" */}
+                    <SelectItem value="all">All Categories</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}

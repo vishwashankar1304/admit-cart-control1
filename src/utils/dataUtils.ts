@@ -1,4 +1,3 @@
-
 import { Product, Order, User, Review, Address } from "@/types";
 
 // Seed initial product data
@@ -8,11 +7,11 @@ export const initializeProducts = () => {
     const initialProducts: Product[] = [
       {
         id: '1',
-        name: 'Laptop Pro X1',
-        description: 'High-performance laptop with 16GB RAM and 512GB SSD',
-        price: 89999,
-        imageUrl: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=2071&auto=format&fit=crop',
-        category: 'Laptops',
+        name: 'LED Bulbs',
+        description: 'Energy-efficient LED bulbs for home and commercial use',
+        price: 299,
+        imageUrl: '/lovable-uploads/images/products/led-bulbs.jpg',
+        category: 'Lighting',
         inStock: true,
         createdAt: new Date().toISOString(),
         reviews: [],
@@ -20,11 +19,11 @@ export const initializeProducts = () => {
       },
       {
         id: '2',
-        name: 'Smartphone Ultra Z',
-        description: '6.7-inch display, 128GB storage, triple camera system',
-        price: 49999,
-        imageUrl: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?q=80&w=2070&auto=format&fit=crop',
-        category: 'Smartphones',
+        name: 'LED Panel',
+        description: 'Modern LED panel lights for ceiling installation',
+        price: 1299,
+        imageUrl: '/lovable-uploads/images/products/led-panel.jpg',
+        category: 'Lighting',
         inStock: true,
         createdAt: new Date().toISOString(),
         reviews: [],
@@ -32,11 +31,11 @@ export const initializeProducts = () => {
       },
       {
         id: '3',
-        name: 'Wireless Noise-Cancelling Headphones',
-        description: 'Premium sound quality with 20 hours battery life',
-        price: 15999,
-        imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=2070&auto=format&fit=crop',
-        category: 'Audio',
+        name: 'Ceiling Fan',
+        description: 'High-performance ceiling fan with energy-efficient motor',
+        price: 2499,
+        imageUrl: '/lovable-uploads/images/products/ceiling-fan.jpg',
+        category: 'Fans',
         inStock: true,
         createdAt: new Date().toISOString(),
         reviews: [],
@@ -44,11 +43,11 @@ export const initializeProducts = () => {
       },
       {
         id: '4',
-        name: '4K Smart TV 55"',
-        description: 'Ultra HD resolution with smart features and HDR',
-        price: 42999,
-        imageUrl: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?q=80&w=1957&auto=format&fit=crop',
-        category: 'TVs',
+        name: 'Table Fan',
+        description: 'Portable table fan with adjustable height and speed',
+        price: 1499,
+        imageUrl: '/lovable-uploads/images/products/table_fan.jpeg',
+        category: 'Fans',
         inStock: true,
         createdAt: new Date().toISOString(),
         reviews: [],
@@ -56,11 +55,11 @@ export const initializeProducts = () => {
       },
       {
         id: '5',
-        name: 'Wireless Gaming Mouse',
-        description: 'High precision optical sensor with programmable buttons',
-        price: 4999,
-        imageUrl: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?q=80&w=2065&auto=format&fit=crop',
-        category: 'Gaming',
+        name: 'Air Cooler',
+        description: 'Powerful air cooler for large spaces',
+        price: 8999,
+        imageUrl: '/lovable-uploads/images/products/air-cooler.jpg',
+        category: 'Cooling',
         inStock: true,
         createdAt: new Date().toISOString(),
         reviews: [],
@@ -68,11 +67,227 @@ export const initializeProducts = () => {
       },
       {
         id: '6',
-        name: 'Smart Home Speaker',
-        description: 'Voice-controlled speaker with built-in assistant',
-        price: 7999,
-        imageUrl: 'https://images.unsplash.com/photo-1589492477829-5e65395b66cc?q=80&w=1974&auto=format&fit=crop',
+        name: 'Emergency Light',
+        description: 'Battery backup emergency light with LED technology',
+        price: 799,
+        imageUrl: '/lovable-uploads/images/products/emergency-light.jpg',
+        category: 'Lighting',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '7',
+        name: 'Wall Lamp',
+        description: 'Decorative wall lamp for indoor and outdoor use',
+        price: 599,
+        imageUrl: '/lovable-uploads/images/products/wall-lamp.jpeg',
+        category: 'Lighting',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '8',
+        name: 'Chandelier',
+        description: 'Elegant chandelier for living room and dining area',
+        price: 3499,
+        imageUrl: '/lovable-uploads/images/products/chandelier.jpeg',
+        category: 'Lighting',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '9',
+        name: 'PVC Pipes',
+        description: 'High-quality PVC pipes for plumbing and electrical work',
+        price: 199,
+        imageUrl: '/lovable-uploads/images/products/pvc-pipes.jpg',
+        category: 'Plumbing',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '10',
+        name: 'Wall Paint',
+        description: 'Premium wall paint for interior and exterior surfaces',
+        price: 899,
+        imageUrl: '/lovable-uploads/images/products/wall-paint.jpg',
+        category: 'Paint',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '11',
+        name: 'Cement',
+        description: 'High-strength cement for construction',
+        price: 399,
+        imageUrl: '/lovable-uploads/images/products/cement.jpg',
+        category: 'Construction',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '12',
+        name: 'Water Tank',
+        description: 'Durable water storage tank for residential use',
+        price: 2499,
+        imageUrl: '/lovable-uploads/images/products/water-tank.jpg',
+        category: 'Plumbing',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '13',
+        name: 'Circuit Breaker',
+        description: 'Safety circuit breaker for electrical protection',
+        price: 499,
+        imageUrl: '/lovable-uploads/images/products/circuit-breaker.jpeg',
+        category: 'Electrical',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '14',
+        name: 'Room Heater',
+        description: 'Electric room heater with adjustable temperature',
+        price: 1999,
+        imageUrl: '/lovable-uploads/images/products/room-heater.jpeg',
+        category: 'Heating',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '15',
+        name: 'WiFi Smart Plug',
+        description: 'Smart plug with WiFi connectivity for home automation',
+        price: 699,
+        imageUrl: '/lovable-uploads/images/products/wifi-plug.jpeg',
         category: 'Smart Home',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '16',
+        name: 'Wall Clock',
+        description: 'Decorative wall clock with silent movement',
+        price: 399,
+        imageUrl: '/lovable-uploads/images/products/wall-clock.jpeg',
+        category: 'Home Decor',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '17',
+        name: 'Wall Primer',
+        description: 'High-quality wall primer for better paint adhesion',
+        price: 599,
+        imageUrl: '/lovable-uploads/images/products/wall-primer.jpeg',
+        category: 'Paint',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '18',
+        name: 'Steel Bars',
+        description: 'Construction grade steel bars for reinforcement',
+        price: 899,
+        imageUrl: '/lovable-uploads/images/products/steel-bars.jpeg',
+        category: 'Construction',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '19',
+        name: 'Plumbing Tools',
+        description: 'Professional plumbing tool set for repairs',
+        price: 1499,
+        imageUrl: '/lovable-uploads/images/products/plumbing-tool.jpeg',
+        category: 'Tools',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '20',
+        name: 'Shower Set',
+        description: 'Complete shower set with mixer and accessories',
+        price: 2499,
+        imageUrl: '/lovable-uploads/images/products/shower-set.jpeg',
+        category: 'Plumbing',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '21',
+        name: 'Floor Tiles',
+        description: 'Premium floor tiles for home and office',
+        price: 49,
+        imageUrl: '/lovable-uploads/images/products/floor-tiles.jpeg',
+        category: 'Construction',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '22',
+        name: 'Extension Board',
+        description: 'Multi-socket extension board with surge protection',
+        price: 399,
+        imageUrl: '/lovable-uploads/images/products/extension-board.jpeg',
+        category: 'Electrical',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '23',
+        name: 'Modular Switch',
+        description: 'Modern modular switches for home and office',
+        price: 299,
+        imageUrl: '/lovable-uploads/images/products/modular-switch.jpg',
+        category: 'Electrical',
+        inStock: true,
+        createdAt: new Date().toISOString(),
+        reviews: [],
+        avgRating: 0
+      },
+      {
+        id: '24',
+        name: 'Exhaust Fan',
+        description: 'Powerful exhaust fan for kitchen and bathroom',
+        price: 899,
+        imageUrl: '/lovable-uploads/images/products/exhaust-fan.jpeg',
+        category: 'Ventilation',
         inStock: true,
         createdAt: new Date().toISOString(),
         reviews: [],
@@ -85,7 +300,8 @@ export const initializeProducts = () => {
 
 // Get all products
 export const getProducts = (): Product[] => {
-  return JSON.parse(localStorage.getItem('products') || '[]');
+  const products = JSON.parse(localStorage.getItem('products') || '[]');
+  return products;
 };
 
 // Get product by id
@@ -107,6 +323,10 @@ export const addProduct = (product: Omit<Product, 'id' | 'createdAt' | 'reviews'
   
   products.push(newProduct);
   localStorage.setItem('products', JSON.stringify(products));
+  
+  // Broadcast the product update to all tabs/windows
+  window.dispatchEvent(new CustomEvent('productsUpdated', { detail: products }));
+  
   return newProduct;
 };
 
@@ -118,6 +338,9 @@ export const updateProduct = (product: Product): Product => {
   if (index !== -1) {
     products[index] = product;
     localStorage.setItem('products', JSON.stringify(products));
+    
+    // Broadcast the product update to all tabs/windows
+    window.dispatchEvent(new CustomEvent('productsUpdated', { detail: products }));
   }
   
   return product;
@@ -130,6 +353,10 @@ export const deleteProduct = (id: string): boolean => {
   
   if (filteredProducts.length < products.length) {
     localStorage.setItem('products', JSON.stringify(filteredProducts));
+    
+    // Broadcast the product update to all tabs/windows
+    window.dispatchEvent(new CustomEvent('productsUpdated', { detail: filteredProducts }));
+    
     return true;
   }
   
