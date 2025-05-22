@@ -478,23 +478,27 @@ export const updateOrderStatus = (id: string, status: Order['status']): Order | 
 };
 
 // Get all users (for admin)
-export const getUsers = (): Omit<User, 'password'>[] => {
+export const getUsers = (): User[] => {
   const users = JSON.parse(localStorage.getItem('users') || '[]');
-  return users.map(({ password, ...user }: User) => user);
+  return users;
 };
 
 // Get stats for admin dashboard
 export const getAdminStats = () => {
   const users = getUsers();
   const orders = getOrders();
-  
+  const products = getProducts();
+
   const totalSales = orders.reduce((sum, order) => sum + order.totalPrice, 0);
   const pendingOrders = orders.filter(order => order.status === 'pending').length;
-  
+  const lowStockProducts = products.filter(product => product.inStock === false || product.stock === 0).length;
+
   return {
     totalUsers: users.length,
     totalOrders: orders.length,
+    totalProducts: products.length,
     totalSales,
-    pendingOrders
+    pendingOrders,
+    lowStockProducts
   };
 };

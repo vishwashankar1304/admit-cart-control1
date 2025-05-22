@@ -218,7 +218,7 @@ const AdminProducts = () => {
     if (!currentProduct) return;
     
     try {
-      await productApi.deleteProduct(currentProduct.id);
+      await productApi.deleteProduct(currentProduct._id);
       
       toast({
         title: "Success",
