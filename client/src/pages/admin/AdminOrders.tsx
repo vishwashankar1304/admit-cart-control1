@@ -160,7 +160,6 @@ const AdminOrders = () => {
             <TableRow>
               <TableHead>Order ID</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Customer</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -180,7 +179,6 @@ const AdminOrders = () => {
                     {formatOrderId(order.id)}
                   </TableCell>
                   <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
-                  <TableCell>{order.userName || order.userId}</TableCell>
                   <TableCell>{formatPrice(order.totalPrice)}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusBadgeVariant(order.status)}>
@@ -198,7 +196,7 @@ const AdminOrders = () => {
                   </TableCell>
                 </TableRow>
               ))
-            )}
+            }
           </TableBody>
         </Table>
       </div>
@@ -221,15 +219,6 @@ const AdminOrders = () => {
           {currentOrder && (
             <>
               <div className="space-y-6">
-                {/* Customer Info */}
-                <div className="border p-4 rounded-md">
-                  <h4 className="text-sm font-medium mb-2">Customer Info</h4>
-                  <div className="text-sm">
-                    <p>Name: {currentOrder.userName || currentOrder.userId}</p>
-                    <p>Email: {currentOrder.userEmail || (currentOrder.userId + '@gmail.com')}</p>
-                  </div>
-                </div>
-                
                 {/* Shipping Address */}
                 {currentOrder.address && (
                   <div className="border p-4 rounded-md">
