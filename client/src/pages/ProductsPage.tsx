@@ -15,10 +15,15 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { productApi } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 
+// Allow _id for backend compatibility
+interface ProductWithMongoId extends Product {
+  _id?: string;
+}
+
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductWithMongoId[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductWithMongoId[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all");
@@ -35,8 +40,8 @@ const ProductsPage = () => {
       
       // Extract categories
       const uniqueCategories = Array.from(
-        new Set(fetchedProducts.map((product) => product.category))
-      );
+        new Set(fetchedProducts.map((product: ProductWithMongoId) => product.category))
+      ) as string[];
       setCategories(uniqueCategories);
     } catch (error) {
       toast({
@@ -254,9 +259,14 @@ const ProductsPage = () => {
       
       {filteredProducts.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product._id} product={product} />
-          ))}
+          {filteredProducts.map((product) => {
+            // Ensure 'id' is present for ProductCard compatibility
+            const productWithId = {
+              ...product,
+              id: product.id || product._id,
+            };
+            return <ProductCard key={productWithId.id} product={productWithId} />;
+          })}
         </div>
       ) : (
         <div className="text-center py-12">
