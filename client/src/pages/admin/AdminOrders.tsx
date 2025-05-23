@@ -168,7 +168,7 @@ const AdminOrders = () => {
           <TableBody>
             {filteredOrders.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-6 text-gray-500">
+                <TableCell colSpan={5} className="text-center py-6 text-gray-500">
                   No orders found
                 </TableCell>
               </TableRow>
