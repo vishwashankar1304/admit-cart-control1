@@ -13,17 +13,24 @@ const HomePage = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Try API first, fallback to local dataUtils if API fails
     const loadProducts = async () => {
       try {
         const products = await productApi.getAllProducts();
-        // Get first 4 products as featured
         setFeaturedProducts(products.slice(0, 4));
       } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to load featured products",
-          variant: "destructive",
-        });
+        // Fallback to local dataUtils
+        try {
+          const { getProducts } = await import("@/utils/dataUtils");
+          const products = getProducts();
+          setFeaturedProducts(products.slice(0, 4));
+        } catch (err) {
+          toast({
+            title: "Error",
+            description: "Failed to load featured products",
+            variant: "destructive",
+          });
+        }
       } finally {
         setLoading(false);
       }
