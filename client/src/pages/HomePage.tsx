@@ -77,8 +77,8 @@ const HomePage = () => {
           </div>
           <div className="hidden md:block">
             <img 
-              src="https://mail.google.com/mail/u/0?ui=2&ik=76c6bf2739&attid=0.1&permmsgid=msg-f:1832885847383820666&th=196fb7f79727497a&view=fimg&fur=ip&permmsgid=msg-f:1832885847383820666&sz=s0-l75-ft&attbid=ANGjdJ_ZQO2ZGTwhlikYShKkqxpinuj-FtdwAK8zvQf0U4hLE2e4_lVoHteGyg3H98BkEQHZ9-beO3mkpN-OhWjiXouZINQgrUaC-LP2uvzhBxkDD0sj7lkiHMDupdc&disp=emb&realattid=ii_196fb7f25242009b95b1&zw"
-              alt="Electronics Showcase"
+              src='/lovable-uploads/images/products/floor-tiles.jpg'
+              alt="Electricals Showcase"
               className="rounded-lg shadow-lg"
             />
           </div>
