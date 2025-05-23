@@ -97,8 +97,8 @@ const HomePage = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {featuredProducts.map((product: any) => (
+              <ProductCard key={product._id || product.id} product={{...product, id: product._id || product.id}} />
             ))}
           </div>
         </div>
