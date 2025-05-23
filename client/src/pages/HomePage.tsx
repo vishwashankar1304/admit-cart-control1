@@ -77,7 +77,7 @@ const HomePage = () => {
           </div>
           <div className="hidden md:block">
             <img 
-              src='/lovable-uploads/images/products/floor-tiles.jpg'
+              src='/lovable-uploads/images/products/siva.webp'
               alt="Electricals Showcase"
               className="rounded-lg shadow-lg"
             />
