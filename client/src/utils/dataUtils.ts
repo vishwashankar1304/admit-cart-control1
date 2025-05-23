@@ -459,18 +459,14 @@ export const addOrder = (
     if (currentUser) {
       const parsed = JSON.parse(currentUser);
       if (parsed.email) {
-        if (!user) user = {} as User;
-        user.email = parsed.email;
-      }
-      if (parsed.name && !user.name) {
-        user.name = parsed.name;
+        user = { ...user, email: parsed.email, name: parsed.name };
       }
     }
   }
 
   const newOrder: Order = {
     id: `order_${Date.now()}`,
-    userId,
+    userId: user && user.id ? user.id : userId,
     items,
     totalPrice,
     status: 'pending',
