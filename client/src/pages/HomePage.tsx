@@ -47,7 +47,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4 grid md:grid-cols-2 gap-8 items-center">
           <div className="space-y-6 md:pr-12">
             <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-              Quality Electronics at{" "}
+              Quality Electricals at{" "}
               <span className="text-brand-yellow">Affordable Prices</span>
             </h1>
             <p className="text-lg md:text-xl opacity-90">
