@@ -196,7 +196,7 @@ const AdminOrders = () => {
                   </TableCell>
                 </TableRow>
               ))
-            }
+           ) }
           </TableBody>
         </Table>
       </div>
@@ -298,7 +298,7 @@ const AdminOrders = () => {
               </div>
             </>
           )}
-          
+          =
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsViewDialogOpen(false)}>
               Close
