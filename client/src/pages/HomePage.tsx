@@ -13,24 +13,17 @@ const HomePage = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Try API first, fallback to local dataUtils if API fails
     const loadProducts = async () => {
       try {
         const products = await productApi.getAllProducts();
-        setFeaturedProducts(products.slice(0, 4));
+        setFeaturedProducts(Array.isArray(products) ? products.slice(0, 4) : []);
       } catch (error) {
-        // Fallback to local dataUtils
-        try {
-          const { getProducts } = await import("@/utils/dataUtils");
-          const products = getProducts();
-          setFeaturedProducts(products.slice(0, 4));
-        } catch (err) {
-          toast({
-            title: "Error",
-            description: "Failed to load featured products",
-            variant: "destructive",
-          });
-        }
+        setFeaturedProducts([]);
+        toast({
+          title: "Error",
+          description: "Failed to load featured products",
+          variant: "destructive",
+        });
       } finally {
         setLoading(false);
       }
@@ -105,7 +98,7 @@ const HomePage = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product._id} product={product} />
             ))}
           </div>
         </div>
