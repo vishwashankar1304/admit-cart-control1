@@ -444,9 +444,16 @@ export const addOrder = (
   const orders = getOrders();
   // Get user info for this order
   const users = getUsers();
-  const user = users.find(u => u.id === userId);
+  // Try to match by id, fallback to currentUser in localStorage
+  let user = users.find(u => u.id === userId);
+  if (!user) {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      user = JSON.parse(currentUser);
+    }
+  }
 
-  const newOrder: Order & { userName?: string; userEmail?: string } = {
+  const newOrder: Order = {
     id: `order_${Date.now()}`,
     userId,
     items,
