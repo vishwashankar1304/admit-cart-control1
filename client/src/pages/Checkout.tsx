@@ -4,13 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatPrice } from "@/utils/formatters";
-import { ArrowLeft, CreditCard, IndianRupee } from "lucide-react";
+import { ArrowLeft, IndianRupee } from "lucide-react";
 
 interface AddressFormData {
   fullName: string;
@@ -21,16 +20,12 @@ interface AddressFormData {
   phone: string;
 }
 
-type PaymentMethod = "razorpay" | "cash_on_delivery";
-
 const CheckoutPage = () => {
   const { cart, checkout } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("razorpay");
-  
   const [addressData, setAddressData] = useState<AddressFormData>({
     fullName: "",
     street: "",
@@ -95,7 +90,7 @@ const CheckoutPage = () => {
         ...addressData
       };
       
-      const orderId = checkout(address, paymentMethod);
+      const orderId = checkout(address, "cash_on_delivery");
       setIsProcessing(false);
       
       if (orderId) {
@@ -210,33 +205,23 @@ const CheckoutPage = () => {
               <CardTitle>Payment Method</CardTitle>
             </CardHeader>
             <CardContent>
-              <RadioGroup
-                value={paymentMethod}
-                onValueChange={(value) => setPaymentMethod(value as PaymentMethod)}
-                className="space-y-4"
-              >
-                <div className="flex items-center space-x-3 border rounded-md p-3 cursor-pointer hover:bg-gray-50">
-                  <RadioGroupItem value="razorpay" id="razorpay" />
-                  <Label htmlFor="razorpay" className="flex items-center cursor-pointer">
-                    <CreditCard className="mr-2 h-5 w-5 text-blue-500" />
-                    <div>
-                      <div className="font-medium">Pay Online (Razorpay)</div>
-                      <div className="text-sm text-gray-500">Credit/Debit Card, UPI, Netbanking</div>
-                    </div>
-                  </Label>
-                </div>
-                
-                <div className="flex items-center space-x-3 border rounded-md p-3 cursor-pointer hover:bg-gray-50">
-                  <RadioGroupItem value="cash_on_delivery" id="cod" />
-                  <Label htmlFor="cod" className="flex items-center cursor-pointer">
-                    <IndianRupee className="mr-2 h-5 w-5 text-green-500" />
-                    <div>
-                      <div className="font-medium">Cash on Delivery</div>
-                      <div className="text-sm text-gray-500">Pay when your order arrives</div>
-                    </div>
-                  </Label>
-                </div>
-              </RadioGroup>
+              <div className="flex items-center space-x-3 border rounded-md p-3 cursor-pointer hover:bg-gray-50">
+                <input
+                  type="radio"
+                  checked
+                  readOnly
+                  className="form-radio h-5 w-5 text-green-500"
+                  id="cod"
+                  name="paymentMethod"
+                />
+                <Label htmlFor="cod" className="flex items-center cursor-pointer">
+                  <IndianRupee className="mr-2 h-5 w-5 text-green-500" />
+                  <div>
+                    <div className="font-medium">Cash on Delivery</div>
+                    <div className="text-sm text-gray-500">Pay when your order arrives</div>
+                  </div>
+                </Label>
+              </div>
             </CardContent>
           </Card>
         </div>
