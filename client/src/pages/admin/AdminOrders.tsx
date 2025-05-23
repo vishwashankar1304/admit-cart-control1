@@ -161,7 +161,6 @@ const AdminOrders = () => {
               <TableHead>Order ID</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Customer</TableHead>
-              <TableHead>Email</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -170,7 +169,7 @@ const AdminOrders = () => {
           <TableBody>
             {filteredOrders.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-6 text-gray-500">
+                <TableCell colSpan={6} className="text-center py-6 text-gray-500">
                   No orders found
                 </TableCell>
               </TableRow>
@@ -182,7 +181,6 @@ const AdminOrders = () => {
                   </TableCell>
                   <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>{order.userName || order.userId}</TableCell>
-                  <TableCell>{order.userEmail || order.userId + '@gmail.com'}</TableCell>
                   <TableCell>{formatPrice(order.totalPrice)}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusBadgeVariant(order.status)}>
