@@ -157,7 +157,7 @@ const AdminProducts = () => {
       formData.append('category', productCategory);
       formData.append('stock', productStock);
       formData.append('inStock', productInStock.toString());
-      formData.append('imageUrl', productImage);
+      formData.append('image', productImage); // <-- changed from 'imageUrl' to 'image'
 
       await productApi.createProduct(formData);
       
@@ -192,7 +192,7 @@ const AdminProducts = () => {
       formData.append('stock', productStock);
       formData.append('inStock', productInStock.toString());
       if (productImage) {
-        formData.append('imageUrl', productImage);
+        formData.append('image', productImage); // <-- changed from 'imageUrl' to 'image'
       }
 
       await productApi.updateProduct(currentProduct._id, formData);
@@ -333,7 +333,7 @@ const AdminProducts = () => {
                   </TableCell>
                 </TableRow>
               ))
-            )}
+            }
           </TableBody>
         </Table>
       </div>

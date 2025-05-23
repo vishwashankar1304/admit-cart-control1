@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://siva-traders-server.vercel.app/api';
+const API_BASE_URL = 'https://siva-traders-server.vercel.app'; // <-- removed '/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -54,4 +54,4 @@ export const productApi = {
     const response = await api.post(`/products/${productId}/reviews/${reviewId}/like`);
     return response.data;
   },
-}; 
+};
