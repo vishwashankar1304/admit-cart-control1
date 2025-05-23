@@ -436,14 +436,17 @@ export const getOrdersByUserId = (userId: string): Order[] => {
 
 // Add new order with address
 export const addOrder = (
-  userId: string, 
-  items: Order['items'], 
+  userId: string,
+  items: Order['items'],
   totalPrice: number,
   address: Address
 ): Order => {
   const orders = getOrders();
-  
-  const newOrder: Order = {
+  // Get user info for this order
+  const users = getUsers();
+  const user = users.find(u => u.id === userId);
+
+  const newOrder: Order & { userName?: string; userEmail?: string } = {
     id: `order_${Date.now()}`,
     userId,
     items,
@@ -451,12 +454,14 @@ export const addOrder = (
     status: 'pending',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    address
+    address,
+    userName: user ? user.name : undefined,
+    userEmail: user ? user.email : undefined
   };
-  
+
   orders.push(newOrder);
   localStorage.setItem('orders', JSON.stringify(orders));
-  
+
   return newOrder;
 };
 

@@ -47,6 +47,8 @@ export interface Order {
   updatedAt: string;
   address?: Address;
   paymentMethod?: PaymentMethod;
+  userName?: string;
+  userEmail?: string;
 }
 
 export interface User {

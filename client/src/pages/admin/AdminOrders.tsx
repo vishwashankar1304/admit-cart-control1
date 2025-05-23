@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -162,6 +161,7 @@ const AdminOrders = () => {
               <TableHead>Order ID</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Customer</TableHead>
+              <TableHead>Email</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -170,7 +170,7 @@ const AdminOrders = () => {
           <TableBody>
             {filteredOrders.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-6 text-gray-500">
+                <TableCell colSpan={7} className="text-center py-6 text-gray-500">
                   No orders found
                 </TableCell>
               </TableRow>
@@ -181,7 +181,8 @@ const AdminOrders = () => {
                     {formatOrderId(order.id)}
                   </TableCell>
                   <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
-                  <TableCell>{order.userId}</TableCell>
+                  <TableCell>{order.userName || order.userId}</TableCell>
+                  <TableCell>{order.userEmail || "-"}</TableCell>
                   <TableCell>{formatPrice(order.totalPrice)}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusBadgeVariant(order.status)}>
@@ -222,6 +223,15 @@ const AdminOrders = () => {
           {currentOrder && (
             <>
               <div className="space-y-6">
+                {/* Customer Info */}
+                <div className="border p-4 rounded-md">
+                  <h4 className="text-sm font-medium mb-2">Customer Info</h4>
+                  <div className="text-sm">
+                    <p>Name: {currentOrder.userName || currentOrder.userId}</p>
+                    <p>Email: {currentOrder.userEmail || "-"}</p>
+                  </div>
+                </div>
+                
                 {/* Shipping Address */}
                 {currentOrder.address && (
                   <div className="border p-4 rounded-md">
