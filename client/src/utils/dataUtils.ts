@@ -453,6 +453,21 @@ export const addOrder = (
     }
   }
 
+  // Always try to get email from localStorage currentUser if not found in users
+  if (!user || !user.email) {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      const parsed = JSON.parse(currentUser);
+      if (parsed.email) {
+        if (!user) user = {} as User;
+        user.email = parsed.email;
+      }
+      if (parsed.name && !user.name) {
+        user.name = parsed.name;
+      }
+    }
+  }
+
   const newOrder: Order = {
     id: `order_${Date.now()}`,
     userId,

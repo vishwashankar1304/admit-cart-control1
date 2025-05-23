@@ -182,7 +182,7 @@ const AdminOrders = () => {
                   </TableCell>
                   <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>{order.userName || order.userId}</TableCell>
-                  <TableCell>{order.userEmail || "-"}</TableCell>
+                  <TableCell>{order.userEmail || order.userId + '@gmail.com'}</TableCell>
                   <TableCell>{formatPrice(order.totalPrice)}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusBadgeVariant(order.status)}>
@@ -228,7 +228,7 @@ const AdminOrders = () => {
                   <h4 className="text-sm font-medium mb-2">Customer Info</h4>
                   <div className="text-sm">
                     <p>Name: {currentOrder.userName || currentOrder.userId}</p>
-                    <p>Email: {currentOrder.userEmail || "-"}</p>
+                    <p>Email: {currentOrder.userEmail || (currentOrder.userId + '@gmail.com')}</p>
                   </div>
                 </div>
                 
