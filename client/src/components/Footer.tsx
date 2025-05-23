@@ -12,7 +12,7 @@ const Footer = () => {
               <span className="text-brand-orange">Traders</span>
             </h3>
             <p className="text-gray-600">
-              Quality Electronics at Affordable Prices
+              Quality Electricals at Affordable Prices
             </p>
           </div>
           
@@ -61,13 +61,14 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-gray-800 mb-3">Contact Us</h4>
             <address className="text-gray-600 not-italic">
-              <p>1234 Electronic Avenue</p>
-              <p>Tech City, TC 56789</p>
-              <p>Email: info@sivatraders.com</p>
-              <p>Phone: (555) 123-4567</p>
+              <p>VRS Complex, Thingalur Road,</p>
+              <p> Mekkur, Vijayamangalam, Tamil Nadu 638056</p>
+              <p>Email: sivatradersvts@gmail.com</p>
+              <p>Phone: +91 82206 59504</p>
             </address>
           </div>
         </div>
+        
         
         <div className="border-t border-gray-200 mt-8 pt-6 text-center text-gray-500 text-sm">
           <p>© {new Date().getFullYear()} SivaTraders. All rights reserved.</p>

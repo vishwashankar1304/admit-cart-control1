@@ -51,7 +51,7 @@ const HomePage = () => {
               <span className="text-brand-yellow">Affordable Prices</span>
             </h1>
             <p className="text-lg md:text-xl opacity-90">
-              Discover our wide range of electronics and home improvement products with same-day delivery.
+              Discover our wide range of electricals and home improvement products with same-day delivery.
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
               <Button 
